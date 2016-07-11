@@ -1,64 +1,59 @@
 const express = require('express')
 const router = express.Router()
 
-// // ROOT
-// router.get('/', (req, res) => {
-//   res.status(200).json({
-//     api_version: 'v1.0.0',
-//     posts: '/posts'
-//   })
-// })
-// index
-var candyshop = [
-{'id': 1, 'name': 'Chewing Gum', 'color': 'Red'},
-{'id': 2, 'name': 'Pez', 'color': 'Green'},
-{'id': 3, 'name': 'Marshmallow', 'color': 'Pink'}]
+let arr = [{id: 1, name: 'Chewing Gum', color: 'Red'},
+  {id: 2, name: 'Pez', color: 'Green'},
+  {id: 3, name: 'Marshmallow', color: 'Pink'},
+  {id: 4, name: 'Candy Stick', color: 'Blue'}]
 
-var validColors = ['Red','Green','Blue','Pink']
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  next()
+})
 
+// INDEX
 router.get('/candies', (req, res) => {
-  res.status(200).json(candyshop)
+  res.status(200).json(arr)
 })
-// show
+
+// SHOW
 router.get('/candies/:id', (req, res) => {
-  res.status(200).json(candyshop[req.params.id - 1])
+  res.status(200).json(arr[req.params.id - 1])
 })
-// create
+
+// CREATE
 router.post('/candies', (req, res) => {
-  if (req.body.color == "haha") {
-    res.status(422).json('invalid color')
-  }
-  res.status(201).json({
+  var newCandy = {
     id: req.body.id,
     name: req.body.name,
     color: req.body.color
-    // title: req.body.title
-  })
-  var newCandy = {
-    id: parseInt(req.body.id),
-    name: req.body.name,
-    color: req.body.color
   }
-  candyshop.push(newCandy)
-  // var candy = [newCandy]
-  // if (validColors.indexOf(newCandy.color) !== -1) {
-  // candyshop.push(newCandy)
-  // }
-  // else{
-  //   res.status(422).json({message: 'wrong color'})
-  // }
-})
-// update
-router.put('/candies/:id', (req, res) => {
-  candyshop[req.params.id - 1].id = req.body.id
-  candyshop[req.params.id - 1].name = req.body.name
-  candyshop[req.params.id - 1].color = req.body.color
-  res.status(200).json(candyshop[req.params.id - 1])
-})
-// deleted
-router.delete('/candies/:id', (req, res) => {
-  res.status(200).json({results: `candies ${req.params.id} deleted`})
-  candyshop.splice(req.params.id - 1, 1)
+
+  if (req.body.color === 'blue') {
+    res.status(422).json({message: 'invalid color'})
+  } else {
+    res.status(201).json({
+      message: 'candy created',
+      id: req.body.id,
+      name: req.body.name,
+      color: req.body.color
+    })
+    arr.push(newCandy)
+  }
 })
 
+// UPDATE
+router.put('/candies/:id', (req, res) => {
+  arr[req.params.id - 1].id = req.body.id
+  arr[req.params.id - 1].name = req.body.name
+  arr[req.params.id - 1].color = req.body.color
+  res.status(200).json(arr[req.params.id - 1])
+})
+
+// DELETE/DESTROY
+router.delete('/candies/:id', (req, res) => {
+  res.status(200).json(`candy ${req.params.id} deleted`)
+  arr.splice(req.params.id - 1, 1)
+})
 module.exports = router
