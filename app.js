@@ -8,14 +8,13 @@ const router = require('./config/routes')
 // app.set('views'. './views')
 // app.set('view engine', 'ejs')
 
-app.use(morgan('dev'))
-
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
   extended: true
 }))
 
 app.use('/', router)
+app.use(morgan('dev'))
 
 app.get('/', (req, res) => {
   res.render('index', {title: 'Candy Shop'})
